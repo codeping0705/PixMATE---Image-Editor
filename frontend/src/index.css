@@ -1,0 +1,23 @@
+@import "tailwindcss";
+
+/* Hide scrollbar for all browsers */
+.hide-scrollbar {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;     /* Firefox */
+}
+.hide-scrollbar::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
+}
+@keyframes runningLine {
+  0% {
+    left: -10%;
+  }
+  100% {
+    left: 80%;
+  }
+}
+
+.animate-runningLine {
+  position: absolute;
+  animation: runningLine 2.5s linear infinite;
+}
