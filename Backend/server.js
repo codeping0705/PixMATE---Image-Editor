@@ -1,11 +1,12 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
+import cookieParser from "cookie-parser";
 import connectDB from "./config/mongoDB.js";
+
 import userRouter from "./routes/userRoute.js";
 import { imageRouter } from "./routes/imageRoute.js";
 import uncropRouter from "./routes/unCropRoute.js";
-import cookieParser from "cookie-parser";
 import upscaleRouter from "./routes/upscaleRoute.js";
 import productRouter from "./routes/productPhotographyRoute.js";
 import textToImageRouter from "./routes/textToImageRoute.js";
@@ -18,17 +19,31 @@ connectDB();
 const app = express();
 const PORT = process.env.PORT || 4000;
 
-// ✅ Fix CORS setup
+// ✅ Dynamic CORS setup for local + deployed frontend
+const allowedOrigins = [
+  "http://localhost:5173",            // Local frontend
+  "https://your-frontend.netlify.app", // Netlify frontend
+  "https://your-frontend.vercel.app",  // Vercel frontend
+];
+
 app.use(
   cors({
-    origin: "http://localhost:5173", // your frontend URL
-    credentials: true, // allow cookies and authentication headers
+    origin: (origin, callback) => {
+      // Allow requests with no origin (like mobile apps or curl)
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    credentials: true,
   })
 );
 
 app.use(express.json());
 app.use(cookieParser());
 
+// ✅ Routes
 app.use("/api/users", userRouter);
 app.use("/api/images", imageRouter);
 app.use("/api/images", uncropRouter);
@@ -38,10 +53,11 @@ app.use("/api/images", textToImageRouter);
 app.use("/api/images", removeTextRouter);
 app.use("/api/images", cleanupRouter);
 
+// ✅ Health check route (Render needs this sometimes)
 app.get("/", (req, res) => {
-  res.send({ message: "Server.js is running successfully!" });
+  res.send({ message: "🚀 Server is running successfully on Render!" });
 });
 
 app.listen(PORT, () => {
-  console.log(`✅ Server listening to port ${PORT}`);
+  console.log(`✅ Server listening on port ${PORT}`);
 });
