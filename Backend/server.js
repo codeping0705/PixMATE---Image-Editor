@@ -21,9 +21,8 @@ const PORT = process.env.PORT || 4000;
 
 // ✅ Dynamic CORS setup for local + deployed frontend
 const allowedOrigins = [
-  "http://localhost:5173",            // Local frontend
-  "https://your-frontend.netlify.app", // Netlify frontend
-  "https://your-frontend.vercel.app",  // Vercel frontend
+  "http://localhost:5173",            
+  "https://pixmate-imageeditor.netlify.app", // your real frontend
 ];
 
 app.use(
